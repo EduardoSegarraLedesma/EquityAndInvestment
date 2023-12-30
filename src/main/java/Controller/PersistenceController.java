@@ -74,7 +74,6 @@ public class PersistenceController {
             Connection connection = InvestmentDB().getConnection();
             Statement statement = connection.createStatement();
             List<ComparePurchase> list = new ArrayList<>();
-            List<Map<String, String>> companies = getCompaniesList();
             ResultSet result = statement.executeQuery(
                     "SELECT Symbol, Quantity, Price, TransactionDate FROM Purchase" +
                             " WHERE Id = '" + id + "';");
