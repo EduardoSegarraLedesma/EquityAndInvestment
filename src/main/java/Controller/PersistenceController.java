@@ -166,7 +166,7 @@ public class PersistenceController {
                     "SELECT Balance FROM Users WHERE "
                             + "Id= '" + userId + "';");
             result.next();
-            return result.getFloat(0);
+            return result.getFloat("Balance");
         } catch (SQLException e) {
             return -1F;
         }
