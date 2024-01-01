@@ -78,11 +78,11 @@ public class PersistenceController {
                     "SELECT Symbol, Quantity, Price, TransactionDate FROM Purchase" +
                             " WHERE Id = '" + id + "';");
             while (result.next()) {
-                list.add(new ComparePurchase(result.getString(1),
-                        result.getInt(2),
-                        result.getFloat(3),
-                        aux.searchForCompanyStockPriceFloatWithSymbol(result.getString(1)),
-                        result.getString(4)));
+                list.add(new ComparePurchase(result.getString("Symbol"),
+                        result.getInt("Quantity"),
+                        result.getFloat("price"),
+                        aux.searchForCompanyStockPriceFloatWithSymbol(result.getString("Symbol")),
+                        result.getObject("TransactionDate").toString()));
             }
             return new ResponseEntity<>(list, HttpStatus.OK);
         } catch (SQLException e) {
@@ -97,7 +97,7 @@ public class PersistenceController {
             Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(purchase.getSymbol());
             updateBalanceWithPurchase(purchase, stockPrice);
             createPurchase(purchase, stockPrice);
-            return new ResponseEntity<>(getUserBalance(purchase.getId())+ "$", HttpStatus.OK);
+            return new ResponseEntity<>(getUserBalance(purchase.getId()) + "$", HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
@@ -108,7 +108,7 @@ public class PersistenceController {
         try {
             Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(sell.getSymbol());
             updateBalanceWithSell(sell, stockPrice);
-            return new ResponseEntity<>(getUserBalance(sell.getId())+ "$", HttpStatus.OK);
+            return new ResponseEntity<>(getUserBalance(sell.getId()) + "$", HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
