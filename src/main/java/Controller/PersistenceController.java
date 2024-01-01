@@ -4,6 +4,7 @@ import Model.ComparePurchase;
 import Model.Purchase;
 import Model.Sell;
 import WebScraping.WebScrapping;
+import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -84,7 +85,7 @@ public class PersistenceController {
                         aux.searchForCompanyStockPriceFloatWithSymbol(result.getString("Symbol")),
                         result.getObject("TransactionDate").toString()));
             }
-            return new ResponseEntity<>(list.toString(), HttpStatus.OK);
+            return new ResponseEntity<>(new Gson().toJson(list), HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
