@@ -3,6 +3,7 @@ name: Deploy to Azure Spring Apps
 on:
   push:
     branches:
+      - master
       - main
       
 jobs:
@@ -34,7 +35,7 @@ jobs:
           inlineScript: |
             az spring app deployment create \
             --name green-deployment \
-            --app ${{ secrets.APPLICATION_NAME2 }} \
+            --app ${{ secrets.APPLICATION_NAME }} \
             --service ${{ secrets.SERVICE_NAME }} \
             --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} \
             --artifact-path target/*.jar
