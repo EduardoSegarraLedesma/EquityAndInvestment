@@ -36,8 +36,8 @@ public class PersistenceController {
         return instance;
     }
 
-    @PostMapping("/setUser")
-    public ResponseEntity<String> setUser(@RequestBody String userId) {
+    @GetMapping("/setUser/{userId}")
+    public ResponseEntity<String> setUser(@PathVariable String userId) {
         Float userBalance = getUserBalance(userId);
         if (userBalance <= -1F) {
             try {
@@ -47,7 +47,7 @@ public class PersistenceController {
                 return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new ResponseEntity<>(userBalance.toString() + " $", HttpStatus.OK);
+            return new ResponseEntity<>(userBalance + " $", HttpStatus.OK);
         }
     }
 
@@ -91,8 +91,8 @@ public class PersistenceController {
     }
 
 
-    @PostMapping("/buyStock")
-    public ResponseEntity<String> buyStock(@RequestBody Purchase purchase) {
+    @GetMapping("/buyStock/{purchase}")
+    public ResponseEntity<String> buyStock(@PathVariable Purchase purchase) {
         try {
             Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(purchase.getSymbol());
             updateBalanceWithPurchase(purchase, stockPrice);
@@ -103,7 +103,7 @@ public class PersistenceController {
         }
     }
 
-    @PostMapping("/sellStock")
+    @GetMapping("/sellStock/{sell}")
     public ResponseEntity<String> sellStock(@PathVariable Sell sell) {
         try {
 
@@ -115,8 +115,8 @@ public class PersistenceController {
         }
     }
 
-    @PostMapping("/deleteUser")
-    public ResponseEntity<String> deleteUser(@RequestBody String userId) {
+    @GetMapping("/deleteUser/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
         try {
             delete("Purchase", userId);
             delete("Users", userId);
