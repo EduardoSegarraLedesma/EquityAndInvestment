@@ -38,4 +38,4 @@ jobs:
             --app ${{ secrets.APPLICATION_NAME }} \
             --service ${{ secrets.SERVICE_NAME }} \
             --resource-group ${{ secrets.RESOURCE_GROUP_NAME }} \
-            --artifact-path target/*.jar
+            --artifact-path target/Investment-1.0-SNAPSHOT.jar
