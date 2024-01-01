@@ -97,7 +97,7 @@ public class PersistenceController {
             Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(purchase.getSymbol());
             updateBalanceWithPurchase(purchase, stockPrice);
             createPurchase(purchase, stockPrice);
-            return new ResponseEntity<>("done", HttpStatus.OK);
+            return new ResponseEntity<>(getUserBalance(purchase.getId())+ "$", HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
@@ -106,10 +106,9 @@ public class PersistenceController {
     @GetMapping("/sellStock/{sell}")
     public ResponseEntity<String> sellStock(@PathVariable Sell sell) {
         try {
-
             Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(sell.getSymbol());
             updateBalanceWithSell(sell, stockPrice);
-            return new ResponseEntity<>("done", HttpStatus.OK);
+            return new ResponseEntity<>(getUserBalance(sell.getId())+ "$", HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
