@@ -1,8 +1,0 @@
-Controller\PersistenceController.class
-Model\Company.class
-Model\ComparePurchase.class
-Model\Sell.class
-InvestmentApplication.class
-Controller\ServerController.class
-Model\Purchase.class
-WebScraping\WebScrapping.class
