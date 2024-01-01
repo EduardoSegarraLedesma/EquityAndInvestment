@@ -69,7 +69,7 @@ public class PersistenceController {
 
 
     @GetMapping("/purchases/{id}")
-    public ResponseEntity<List<ComparePurchase>> getPurchases(@PathVariable String id) {
+    public ResponseEntity<String> getPurchases(@PathVariable String id) {
         try {
             Connection connection = InvestmentDB().getConnection();
             Statement statement = connection.createStatement();
@@ -84,7 +84,7 @@ public class PersistenceController {
                         aux.searchForCompanyStockPriceFloatWithSymbol(result.getString("Symbol")),
                         result.getObject("TransactionDate").toString()));
             }
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            return new ResponseEntity<>(list.toString(), HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
