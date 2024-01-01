@@ -140,7 +140,7 @@ public class PersistenceController {
         Connection connection = InvestmentDB().getConnection();
         Statement statement = connection.createStatement();
         statement.execute("INSERT INTO Users VALUES ("
-                + "" + userId + ","
+                + "'" + userId + "',"
                 + "" + 0 + ");");
     }
 
@@ -150,7 +150,7 @@ public class PersistenceController {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         statement.execute("INSERT INTO Users VALUES ("
-                + "" + purchase.getId() + ","
+                + "'" + purchase.getId() + "',"
                 + "'" + purchase.getSymbol() + "',"
                 + "" + price + ","
                 + "" + purchase.getQuantity() + ","
