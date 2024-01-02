@@ -85,7 +85,7 @@ public class PersistenceController {
                         result.getObject("TransactionDate").toString().replace(" ", "T"));
                 list += purchase + ", ";
             }
-            list = list.substring(0, list.length() - 1);
+            list = list.substring(0, list.length() - 2);
             list += "]";
             return new ResponseEntity<>(list, HttpStatus.OK);
         } catch (SQLException e) {
