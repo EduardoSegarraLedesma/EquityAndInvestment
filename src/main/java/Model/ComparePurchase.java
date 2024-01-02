@@ -1,5 +1,7 @@
 package Model;
 
+import java.text.DecimalFormat;
+
 public class ComparePurchase {
 
     private final String Symbol;
@@ -14,7 +16,8 @@ public class ComparePurchase {
         this.Quantity = quantity;
         this.buyPrice = buyPrice;
         this.nowPrice = nowPrice;
-        this.difference = (1 - (buyPrice / nowPrice)) * 100;
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        this.difference = Float.parseFloat(decimalFormat.format((1 - (buyPrice / nowPrice)) * 100));
         this.TransactionDate = TransactionDate;
     }
 
@@ -42,5 +45,13 @@ public class ComparePurchase {
         return TransactionDate;
     }
 
-
+    @Override
+    public String toString() {
+        return "Symbol:" + Symbol +
+                ",Quantity:" + Quantity +
+                ",buyPrice:" + buyPrice +
+                ",nowPrice:" + nowPrice +
+                ",difference:" + difference +
+                ",TransactionDate:" + TransactionDate;
+    }
 }

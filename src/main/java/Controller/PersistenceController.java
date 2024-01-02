@@ -73,32 +73,21 @@ public class PersistenceController {
         try {
             Connection connection = InvestmentDB().getConnection();
             Statement statement = connection.createStatement();
-            List<ComparePurchase> list = new ArrayList<>();
             ResultSet result = statement.executeQuery(
                     "SELECT Symbol, Quantity, Price, TransactionDate FROM Purchase" +
                             " WHERE Id = '" + id + "';");
-            StringBuilder json = new StringBuilder("[");
+            String list = "[";
             while (result.next()) {
+                list += "{";
                 ComparePurchase purchase = new ComparePurchase(result.getString("Symbol"),
                         result.getInt("Quantity"),
                         result.getFloat("price"),
                         aux.searchForCompanyStockPriceFloatWithSymbol(result.getString("Symbol")),
                         result.getObject("TransactionDate").toString().replace(" ", "T"));
-                list.add(purchase);
-                json.append("{")
-                        .append("\"Symbol\":\"").append(purchase.getSymbol()).append("\",")
-                        .append("\"Quantity\":").append(purchase.getQuantity()).append(",")
-                        .append("\"buyPrice\":").append(purchase.getBuyPrice()).append(",")
-                        .append("\"nowPrice\":").append(purchase.getNowPrice()).append(",")
-                        .append("\"difference\":").append(purchase.getDifference()).append(",")
-                        .append("\"TransactionDate\":\"").append(purchase.getTransactionDate()).append("\"")
-                        .append("},");
+                list += purchase + "}";
             }
-            if (json.length() > 1) {
-                json.deleteCharAt(json.length() - 1);
-            }
-            json.append("]");
-            return new ResponseEntity<>(json.toString(), HttpStatus.OK);
+            list += "]";
+            return new ResponseEntity<>(list, HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
