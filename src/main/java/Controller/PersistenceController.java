@@ -5,18 +5,21 @@ import Model.Purchase;
 import Model.Sell;
 import WebScraping.WebScrapping;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -111,10 +114,15 @@ public class PersistenceController {
     @GetMapping("/sellStock/{sell}")
     public ResponseEntity<String> sellStock(@PathVariable String sell) {
         try {
-            Sell stock = new Gson().fromJson(sell, Sell.class);
-            Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
-            updateBalanceWithSell(stock, stockPrice);
-            return new ResponseEntity<>(getUserBalance(stock.getId()) + "$", HttpStatus.OK);
+            Type SellList = new TypeToken<ArrayList<Sell>>() {
+            }.getType();
+            List<Sell> toSell = new Gson().fromJson(sell, SellList);
+            for (Sell stock : toSell) {
+                Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
+                updateBalanceWithSell(stock, stockPrice);
+                deletePurchase(stock);
+            }
+            return new ResponseEntity<>(getUserBalance(toSell.get(0).getId()) + "$", HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
@@ -183,7 +191,7 @@ public class PersistenceController {
     }
 
     private void updateBalanceWithSell(Sell sell, Float price) throws SQLException {
-        Float newBalance = getUserBalance(sell.getId()) + (sell.getQuantity() * price);
+        Float newBalance = getUserBalance(sell.getId()) + (getPurchaseQuantity(sell) * price);
         updateBalance(sell.getId(), newBalance);
     }
 
@@ -192,6 +200,17 @@ public class PersistenceController {
         Statement statement = connection.createStatement();
         statement.executeUpdate("UPDATE Users SET Balance = '" + newBalance + "' WHERE Id ='" + userId + "';");
         connection.close();
+    }
+
+    private int getPurchaseQuantity(Sell stock) throws SQLException {
+        Connection connection = InvestmentDB().getConnection();
+        Statement statement = connection.createStatement();
+        ResultSet result = statement.executeQuery(
+                "SELECT QuantityFROM Purchase" +
+                        " WHERE Id = '" + stock + "' AND" +
+                        "TransactionDate = '" + stock.getTransactionDate().replace("T", " ") + "';");
+        result.next();
+        return result.getInt("Quantity");
     }
 
     private List<Map<String, String>> getCompaniesList() {
@@ -203,6 +222,14 @@ public class PersistenceController {
         Connection connection = InvestmentDB().getConnection();
         Statement statement = connection.createStatement();
         statement.execute("DELETE FROM " + table + " WHERE Id = '" + userID + "';");
+    }
+
+    private void deletePurchase(Sell stock) throws SQLException {
+        Connection connection = InvestmentDB().getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute("DELETE FROM Purchase WHERE " +
+                "Id = '" + stock.getId() + "' AND" +
+                "TransactionDate = '" + stock.getTransactionDate().replace("T", " ") + "';");
     }
 
 }
