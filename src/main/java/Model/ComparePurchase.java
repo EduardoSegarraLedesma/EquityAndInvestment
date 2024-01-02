@@ -14,8 +14,8 @@ public class ComparePurchase {
     public ComparePurchase(String symbol, int quantity, Float buyPrice, Float nowPrice, String TransactionDate) {
         this.Symbol = symbol;
         this.Quantity = quantity;
-        this.buyPrice = buyPrice.toString();
-        this.nowPrice = nowPrice.toString();
+        this.buyPrice = "$" + buyPrice.toString();
+        this.nowPrice = "$" + nowPrice.toString();
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         this.difference = Float.parseFloat(decimalFormat.format((1 - (buyPrice / nowPrice)) * 100)) + "%";
         this.TransactionDate = TransactionDate;
