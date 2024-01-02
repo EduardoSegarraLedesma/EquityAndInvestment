@@ -78,13 +78,12 @@ public class PersistenceController {
                             " WHERE Id = '" + id + "';");
             String list = "[";
             while (result.next()) {
-                list += "{";
                 ComparePurchase purchase = new ComparePurchase(result.getString("Symbol"),
                         result.getInt("Quantity"),
                         result.getFloat("price"),
                         aux.searchForCompanyStockPriceFloatWithSymbol(result.getString("Symbol")),
                         result.getObject("TransactionDate").toString().replace(" ", "T"));
-                list += purchase + "}";
+                list += purchase + ", ";
             }
             list += "]";
             return new ResponseEntity<>(list, HttpStatus.OK);
