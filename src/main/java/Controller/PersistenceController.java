@@ -208,7 +208,7 @@ public class PersistenceController {
         ResultSet result = statement.executeQuery(
                 "SELECT QuantityFROM Purchase" +
                         " WHERE Id = '" + stock + "' AND" +
-                        "TransactionDate = '" + stock.getTransactionDate().replace("T", " ") + "';");
+                        "TransactionDate LIKE '" + stock.getTransactionDate().replace("T", " ") + "%';");
         result.next();
         return result.getInt("Quantity");
     }
@@ -229,7 +229,7 @@ public class PersistenceController {
         Statement statement = connection.createStatement();
         statement.execute("DELETE FROM Purchase WHERE " +
                 "Id = '" + stock.getId() + "' AND" +
-                "TransactionDate = '" + stock.getTransactionDate().replace("T", " ") + "';");
+                "TransactionDate LIKE '" + stock.getTransactionDate().replace("T", " ") + "%';");
     }
 
 }
