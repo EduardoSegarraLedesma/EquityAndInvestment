@@ -98,9 +98,12 @@ public class PersistenceController {
         try {
             Purchase stock = new Gson().fromJson(purchase, Purchase.class);
             Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
-            updateBalanceWithPurchase(stock, stockPrice);
-            createPurchase(stock, stockPrice);
-            return new ResponseEntity<>(getUserBalance(stock.getId()) + "$", HttpStatus.OK);
+            if (getUserBalance(stock.getId()) >= (stock.getQuantity() * stockPrice)) {
+                updateBalanceWithPurchase(stock, stockPrice);
+                createPurchase(stock, stockPrice);
+                return new ResponseEntity<>(getUserBalance(stock.getId()) + "$", HttpStatus.OK);
+            } else
+                return new ResponseEntity<>("Not Enough Balance", HttpStatus.BAD_REQUEST);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
@@ -153,7 +156,7 @@ public class PersistenceController {
         Statement statement = connection.createStatement();
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        statement.execute("INSERT INTO Users VALUES ("
+        statement.execute("INSERT INTO Purchase VALUES ("
                 + "'" + purchase.getId() + "',"
                 + "'" + purchase.getSymbol() + "',"
                 + "" + price + ","
