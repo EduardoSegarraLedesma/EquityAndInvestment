@@ -206,7 +206,7 @@ public class PersistenceController {
         Connection connection = InvestmentDB().getConnection();
         Statement statement = connection.createStatement();
         ResultSet result = statement.executeQuery(
-                "SELECT QuantityFROM Purchase" +
+                "SELECT Quantity FROM Purchase" +
                         " WHERE Id = '" + stock.getId() + "' AND" +
                         "TransactionDate = '" + stock.getTransactionDate() + "';");
         result.next();
