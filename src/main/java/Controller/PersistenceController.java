@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +102,7 @@ public class PersistenceController {
                 createPurchase(stock, stockPrice);
                 return new ResponseEntity<>(getUserBalance(stock.getId()) + "$", HttpStatus.OK);
             } else
-                return new ResponseEntity<>("Not Enough Balance", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Not Enough Balance", HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
