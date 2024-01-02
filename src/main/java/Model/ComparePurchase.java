@@ -47,11 +47,11 @@ public class ComparePurchase {
 
     @Override
     public String toString() {
-        return "{Symbol:" + Symbol +
-                ", Quantity:" + Quantity +
-                ", buyPrice:" + buyPrice +
-                ", nowPrice:" + nowPrice +
-                ", difference:" + difference +
-                ", TransactionDate:" + TransactionDate + "}";
+        return "{Symbol=" + Symbol +
+                ", Quantity=" + Quantity +
+                ", buyPrice=" + buyPrice +
+                ", nowPrice=" + nowPrice +
+                ", difference=" + difference +
+                ", TransactionDate=" + TransactionDate + "}";
     }
 }
