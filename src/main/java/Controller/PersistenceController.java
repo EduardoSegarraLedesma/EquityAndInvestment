@@ -118,6 +118,8 @@ public class PersistenceController {
             }.getType();
             List<Sell> toSell = new Gson().fromJson(sell, SellList);
             for (Sell stock : toSell) {
+                //For testing purposes
+                updateBalance(stock.getId(),100F);
                 Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
                 updateBalanceWithSell(stock, stockPrice);
                 deletePurchase(stock);
