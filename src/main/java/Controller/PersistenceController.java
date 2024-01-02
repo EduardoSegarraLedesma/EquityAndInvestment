@@ -18,6 +18,7 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -76,18 +77,16 @@ public class PersistenceController {
             ResultSet result = statement.executeQuery(
                     "SELECT Symbol, Quantity, Price, TransactionDate FROM Purchase" +
                             " WHERE Id = '" + id + "';");
-            String list = "[";
+            List<ComparePurchase> list = new LinkedList<>();
             while (result.next()) {
                 ComparePurchase purchase = new ComparePurchase(result.getString("Symbol"),
                         result.getInt("Quantity"),
                         result.getFloat("price"),
                         aux.searchForCompanyStockPriceFloatWithSymbol(result.getString("Symbol")),
                         result.getObject("TransactionDate").toString().replace(" ", "T"));
-                list += purchase + ", ";
+                list.add(purchase);
             }
-            list = list.substring(0, list.length() - 2);
-            list += "]";
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            return new ResponseEntity<>(new Gson().toJson(list), HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
