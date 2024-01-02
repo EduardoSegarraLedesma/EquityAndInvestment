@@ -94,23 +94,25 @@ public class PersistenceController {
 
 
     @GetMapping("/buyStock/{purchase}")
-    public ResponseEntity<String> buyStock(@PathVariable Purchase purchase) {
+    public ResponseEntity<String> buyStock(@PathVariable String purchase) {
         try {
-            Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(purchase.getSymbol());
-            updateBalanceWithPurchase(purchase, stockPrice);
-            createPurchase(purchase, stockPrice);
-            return new ResponseEntity<>(getUserBalance(purchase.getId()) + "$", HttpStatus.OK);
+            Purchase stock = new Gson().fromJson(purchase, Purchase.class);
+            Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
+            updateBalanceWithPurchase(stock, stockPrice);
+            createPurchase(stock, stockPrice);
+            return new ResponseEntity<>(getUserBalance(stock.getId()) + "$", HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/sellStock/{sell}")
-    public ResponseEntity<String> sellStock(@PathVariable Sell sell) {
+    public ResponseEntity<String> sellStock(@PathVariable String sell) {
         try {
-            Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(sell.getSymbol());
-            updateBalanceWithSell(sell, stockPrice);
-            return new ResponseEntity<>(getUserBalance(sell.getId()) + "$", HttpStatus.OK);
+            Sell stock = new Gson().fromJson(sell, Sell.class);
+            Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
+            updateBalanceWithSell(stock, stockPrice);
+            return new ResponseEntity<>(getUserBalance(stock.getId()) + "$", HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>("Database Error, please try later", HttpStatus.BAD_REQUEST);
         }
