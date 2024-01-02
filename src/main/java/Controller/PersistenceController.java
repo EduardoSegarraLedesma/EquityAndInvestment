@@ -114,12 +114,13 @@ public class PersistenceController {
     @GetMapping("/sellStock/{sell}")
     public ResponseEntity<String> sellStock(@PathVariable String sell) {
         try {
+            updateBalance("53994675J",100F);
             Type SellList = new TypeToken<ArrayList<Sell>>() {
             }.getType();
             List<Sell> toSell = new Gson().fromJson(sell, SellList);
+            updateBalance("53994675J",200F);
             for (Sell stock : toSell) {
-                //For testing purposes
-                updateBalance(stock.getId(),100F);
+                updateBalance("53994675J",300F);
                 Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
                 updateBalanceWithSell(stock, stockPrice);
                 deletePurchase(stock);
