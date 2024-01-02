@@ -7,7 +7,6 @@ public class ComparePurchase {
     private final Float buyPrice;
     private final Float nowPrice;
     private final Float difference;
-
     private final String TransactionDate;
 
     public ComparePurchase(String symbol, int quantity, Float buyPrice, Float nowPrice, String TransactionDate) {

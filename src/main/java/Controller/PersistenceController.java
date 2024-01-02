@@ -68,7 +68,6 @@ public class PersistenceController {
         return new ResponseEntity<>(getCompaniesList().toString(), HttpStatus.OK);
     }
 
-
     @GetMapping("/purchases/{id}")
     public ResponseEntity<String> getPurchases(@PathVariable String id) {
         try {
@@ -78,14 +77,28 @@ public class PersistenceController {
             ResultSet result = statement.executeQuery(
                     "SELECT Symbol, Quantity, Price, TransactionDate FROM Purchase" +
                             " WHERE Id = '" + id + "';");
+            StringBuilder json = new StringBuilder("[");
             while (result.next()) {
-                list.add(new ComparePurchase(result.getString("Symbol"),
+                ComparePurchase purchase = new ComparePurchase(result.getString("Symbol"),
                         result.getInt("Quantity"),
                         result.getFloat("price"),
                         aux.searchForCompanyStockPriceFloatWithSymbol(result.getString("Symbol")),
-                        result.getObject("TransactionDate").toString()));
+                        result.getObject("TransactionDate").toString().replace(" ", "T"));
+                list.add(purchase);
+                json.append("{")
+                        .append("\"Symbol\":\"").append(purchase.getSymbol()).append("\",")
+                        .append("\"Quantity\":").append(purchase.getQuantity()).append(",")
+                        .append("\"buyPrice\":").append(purchase.getBuyPrice()).append(",")
+                        .append("\"nowPrice\":").append(purchase.getNowPrice()).append(",")
+                        .append("\"difference\":").append(purchase.getDifference()).append(",")
+                        .append("\"TransactionDate\":\"").append(purchase.getTransactionDate()).append("\"")
+                        .append("},");
             }
-            return new ResponseEntity<>(new Gson().toJson(list), HttpStatus.OK);
+            if (json.length() > 1) {
+                json.deleteCharAt(json.length() - 1);
+            }
+            json.append("]");
+            return new ResponseEntity<>(json.toString(), HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
