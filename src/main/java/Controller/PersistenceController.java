@@ -118,9 +118,7 @@ public class PersistenceController {
             }.getType();
             List<Sell> toSell = new Gson().fromJson(sell, SellList);
             for (Sell stock : toSell) {
-                updateBalance("53994675J", 300F);
                 Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
-                updateBalance("53994675J", 400F);
                 updateBalanceWithSell(stock, stockPrice);
                 deletePurchase(stock);
             }
@@ -204,7 +202,6 @@ public class PersistenceController {
         statement.executeUpdate("UPDATE Users SET Balance = '" + newBalance + "' WHERE Id ='" + userId + "';");
         connection.close();
     }
-
 
     private List<Map<String, String>> getCompaniesList() {
         WebScrapping aux = new WebScrapping();
