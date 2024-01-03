@@ -114,14 +114,13 @@ public class PersistenceController {
     @GetMapping("/sellStock/{sell}")
     public ResponseEntity<String> sellStock(@PathVariable String sell) {
         try {
-            updateBalance("53994675J",100F);
             Type SellList = new TypeToken<ArrayList<Sell>>() {
             }.getType();
             List<Sell> toSell = new Gson().fromJson(sell, SellList);
-            updateBalance("53994675J",200F);
             for (Sell stock : toSell) {
-                updateBalance("53994675J",300F);
+                updateBalance("53994675J", 300F);
                 Float stockPrice = aux.searchForCompanyStockPriceFloatWithSymbol(stock.getSymbol());
+                updateBalance("53994675J", 400F);
                 updateBalanceWithSell(stock, stockPrice);
                 deletePurchase(stock);
             }
@@ -144,6 +143,7 @@ public class PersistenceController {
 
     // ----------------- SUPPORT FUNCTIONS ----------------- //
 
+    //////////////////////////////////////////
     private DataSource InvestmentDB() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -194,7 +194,7 @@ public class PersistenceController {
     }
 
     private void updateBalanceWithSell(Sell sell, Float price) throws SQLException {
-        Float newBalance = getUserBalance(sell.getId()) + (getPurchaseQuantity(sell) * price);
+        Float newBalance = getUserBalance(sell.getId()) + (sell.getQuantity() * price);
         updateBalance(sell.getId(), newBalance);
     }
 
@@ -205,16 +205,6 @@ public class PersistenceController {
         connection.close();
     }
 
-    private int getPurchaseQuantity(Sell stock) throws SQLException {
-        Connection connection = InvestmentDB().getConnection();
-        Statement statement = connection.createStatement();
-        ResultSet result = statement.executeQuery(
-                "SELECT Quantity FROM Purchase" +
-                        " WHERE Id = '" + stock.getId() + "' AND" +
-                        "TransactionDate = '" + stock.getTransactionDate() + "';");
-        result.next();
-        return result.getInt("Quantity");
-    }
 
     private List<Map<String, String>> getCompaniesList() {
         WebScrapping aux = new WebScrapping();
@@ -230,9 +220,13 @@ public class PersistenceController {
     private void deletePurchase(Sell stock) throws SQLException {
         Connection connection = InvestmentDB().getConnection();
         Statement statement = connection.createStatement();
+        LocalDateTime parsedDate = LocalDateTime.parse(stock.getTransactionDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = parsedDate.format(formatter);
         statement.execute("DELETE FROM Purchase WHERE " +
-                "Id = '" + stock.getId() + "' AND" +
-                "TransactionDate = '" + stock.getTransactionDate() + "';");
+                "Id = '" + stock.getId() + "' " +
+                "AND Symbol = '" + stock.getSymbol() + "' " +
+                "AND TransactionDate = '" + formattedDate + "';");
     }
 
 }
